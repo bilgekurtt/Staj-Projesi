@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "mobilkargo.app"
-               BlueprintName = "mobilkargo"
-               ReferencedContainer = "container:mobilkargo.xcodeproj">
+               BuildableName = "StajProje.app"
+               BlueprintName = "StajProje"
+               ReferencedContainer = "container:StajProje.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "mobilkargoTests.xctest"
-               BlueprintName = "mobilkargoTests"
-               ReferencedContainer = "container:mobilkargo.xcodeproj">
+               BuildableName = "StajProjeTests.xctest"
+               BlueprintName = "StajProjeTests"
+               ReferencedContainer = "container:StajProje.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "mobilkargo.app"
-            BlueprintName = "mobilkargo"
-            ReferencedContainer = "container:mobilkargo.xcodeproj">
+            BuildableName = "StajProje.app"
+            BlueprintName = "StajProje"
+            ReferencedContainer = "container:StajProje.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "mobilkargo.app"
-            BlueprintName = "mobilkargo"
-            ReferencedContainer = "container:mobilkargo.xcodeproj">
+            BuildableName = "StajProje.app"
+            BlueprintName = "StajProje"
+            ReferencedContainer = "container:StajProje.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
