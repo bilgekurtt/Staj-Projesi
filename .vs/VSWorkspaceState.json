@@ -2,8 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\src",
+    "\\src\\navigation",
     "\\src\\screens"
   ],
-  "SelectedNode": "\\src\\screens\\HomeScreen.tsx",
+  "SelectedNode": "\\src\\navigation\\RootNavigator.tsx",
   "PreviewInSolutionExplorer": false
 }

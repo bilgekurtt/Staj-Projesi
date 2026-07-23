@@ -14,42 +14,37 @@ api.interceptors.request.use((config) => {
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
-
     return config;
 });
 
-//Login endpoint methods
+//export api calls in a single object
+export const out = {
 
-export async function login(password: string) {
+    login: async (password: string) => {
+        const response = await api.post("/api/login", {
+            email: "demo@example.com",
+            password
+        });
+        return response.data;
+    },
 
-    const response = await api.post("/api/login", {
-        email: "demo@example.com",
-        password
-    });
-
-    return response.data;
-}
-
-//User endpoint methods
-
-export async function getUsers(page=1) {
-
-    const response = await api.get("/api/users", {
-        params: {
-            page,
-            limit: 20
+    users: {
+        get: async (page = 1) => {
+            const response = await api.get("api/users", {
+                params: {
+                    page,
+                    limit: 20
+                },
+            });
+            return response.data;
         },
-    });
+    },
 
-    return response.data;
-}
+    tags: {
+        get: async () => {
+            const response = await api.get("/api/tags");
+            return response.data;
+        },
+    },
+};
 
-//Tags endpoint methods
-
-export async function getTags() {
-
-    const response = await api.get("/api/tags", {
-    });
-
-    return response.data;
-}

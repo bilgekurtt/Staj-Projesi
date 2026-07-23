@@ -1,67 +1,46 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import { View, Text, FlatList } from 'react-native';
-import { getUsers, getTags } from "../api/axios";
+import { out } from "../api/axios";
 
 
 export default function HomeScreen() {
 
     const [users, setUsers] = useState<any[]>([]);
-    const [tags, setTags] = useState([]);
-    const [page, setPage] = useState(1);
-    const [loading, setLoading] = useState(false);
-    const [hasMore, setHasMore] = useState(true);
+
+    const pageRef = useRef(1);
+    const isFetchingRef = useRef(false);
 
     async function loadUsers(pageNumber : number) {
 
-        if (loading || !hasMore) return;
+        if (isFetchingRef.current) return;
 
-        setLoading(true);
+        isFetchingRef.current = true;
 
         try {
-            const response = await getUsers(pageNumber);
+            const response = await out.users.get(pageNumber);
 
-            setUsers(previous => [
-                ...previous,
-                ...response.data
-            ]);
+            setUsers(previous => {
+                const map = new Map();
 
-            setPage(pageNumber);
+                //append the new elements to the already existing ones
+                [...previous, ...response.data].forEach(user => {
+                    map.set(user._id, user);
+                });
 
-            if (pageNumber >= response.pagination.totalPages) {
-                setHasMore(false);
-            }
+                return Array.from(map.values());
+            });
+
+            pageRef.current = pageNumber;
+
+            if (pageNumber >= response.pagination.totalPages) return;
         } finally {
-            setLoading(false);
+            isFetchingRef.current = false;
         }
     }
 
-    async function loadTags(pageNumber: number) {
-
-        if (loading || !hasMore) return;
-
-        setLoading(true);
-
-        try {
-            const response = await getTags(pageNumber);
-
-            setTags(previous => [
-                ...previous,
-                ...response.data
-            ]);
-
-            setPage(pageNumber);
-
-            if (pageNumber >= response.pagination.totalPages) {
-                setHasMore(false);
-            }
-        } finally {
-            setLoading(false);
-        }
-    }
-
+    //call once when the components mounts on the screen
     useEffect(() => {
         loadUsers(1);
-        loadTags(1);
     }, []);
 
     return (
@@ -76,7 +55,7 @@ export default function HomeScreen() {
                     <Text>{item.tags.map((tag:any) => tag.name).join(", ")}</Text>
                 </View>
             )}
-            onEndReached={() => { console.log("onEndReached"); loadUsers(page + 1); }}
+            onEndReached={() => {loadUsers(pageRef.current + 1); }}
             onEndReachedThreshold={0.5}
         />
     );

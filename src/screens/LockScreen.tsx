@@ -1,6 +1,6 @@
 ﻿import React, { useState, useRef } from 'react';
 import { View, Text, TextInput, StyleSheet, SafeAreaView } from 'react-native';
-import { login } from '../api/axios';
+import { out } from '../api/axios';
 import { setToken } from '../services/tokenService';
 
 interface PinInputProps {
@@ -21,7 +21,7 @@ const LockScreen = ({ onUnlock }: PinInputProps) => {
 
         if (fullPin.length === 4) {
             try {
-                const response = await login(fullPin);
+                const response = await out.login(fullPin);
                 setToken(response.token);
                 onUnlock();
             } catch {
