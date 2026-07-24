@@ -5,8 +5,24 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import LockScreen from "../screens/LockScreen";
 import HomeScreen from "../screens/HomeScreen";
+import EditScreen from '../screens/EditScreen';
 
 const Stack = createNativeStackNavigator();
+
+function AppStack() {
+    return (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen
+                name="Home"
+                component={HomeScreen}
+            />
+            <Stack.Screen
+                name="EditUser"
+                component={EditScreen}
+            />
+        </Stack.Navigator>
+    );
+}
 
 export default function RootNavigator() {
 
@@ -24,22 +40,20 @@ export default function RootNavigator() {
 
     return (
         <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }} >
-                {!unlocked ? (
+            {unlocked ? (
+                <AppStack />
+            ) : (
+                <Stack.Navigator screenOptions={{ headerShown: false }}>
                     <Stack.Screen name="Lock">
                         {() => (
-
-                            //create a func and send it to lockscreen
-                            <LockScreen onUnlock={() => setUnlocked(true)}/>
+                            <LockScreen
+                                onUnlock={() => setUnlocked(true)}
+                            />
                         )}
                     </Stack.Screen>
-                ) : (
-                        <Stack.Screen
-                            name="Home"
-                            component={HomeScreen}
-                        />
-                )}
-            </Stack.Navigator>
+                </Stack.Navigator>
+            )}
         </NavigationContainer>
     );
 }
+
