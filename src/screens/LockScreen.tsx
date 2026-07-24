@@ -115,7 +115,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 20,
         borderRadius: 5,
-        borderStyle: 'solid',
         padding: 5,
     },
     messageText: {
@@ -125,5 +124,6 @@ const styles = StyleSheet.create({
         color: '#333',
     }
 });
+
 
 export default LockScreen;

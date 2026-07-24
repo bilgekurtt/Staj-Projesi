@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef} from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
 import { out } from "../api/axios";
+import { getTagColor } from "../services/tagColors";
 
 
 export default function HomeScreen() {
@@ -47,12 +48,39 @@ export default function HomeScreen() {
         <FlatList
             data={users}
             keyExtractor={(item) => item._id}
+            ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+            style={styles.container}
+            contentContainerStyle={styles.itemContainer}
             renderItem={({ item }) => (
-                <View>
-                    <Text>{item.name} {item.lastname}</Text>
-                    <Text>{item.email}</Text>
-                    <Text>{item.description}</Text>
-                    <Text>{item.tags.map((tag:any) => tag.name).join(", ")}</Text>
+
+                <View style={styles.card}>
+
+                    <View style={styles.title}>
+                        <Image
+                        style={styles.picture}
+                        source={{uri: item.avatarURL }}
+                        />
+                        <Text
+                            style={{ fontWeight: "bold", fontSize: 16}}>
+                            {item.name} {item.lastname}
+                        </Text>
+                    </View>
+
+                    <Text style={{color: "gray"}}>{item.description}</Text>
+
+                    <View style={styles.tagBox}>
+                        {item.tags.map((tag: any) => (
+                            <View
+                                key={tag._id}
+                                style={[
+                                    styles.tag,
+                                    { backgroundColor: getTagColor(tag.name) }
+                                ]}
+                            >
+                                <Text>{tag.name}</Text>
+                            </View>
+                        ))}
+                    </View>
                 </View>
             )}
             onEndReached={() => {loadUsers(pageRef.current + 1); }}
@@ -61,3 +89,44 @@ export default function HomeScreen() {
     );
    
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#B6D0E2',
+    },
+    itemContainer: {
+        padding: 10,
+        marginTop: 230,
+    },
+    tagBox: {
+        flexDirection: 'row',
+        marginTop: 5,
+    },
+    tag: {
+        paddingHorizontal: 12,
+        paddingVertical: 5,
+        borderRadius: 999,
+        marginRight: 3,
+
+    },
+    card: {
+        backgroundColor: '#ffffff',
+        borderRadius: 8,
+        padding: 6,
+        shadowColor: '#000',
+        elevation: 2,
+    },
+    title: {
+        borderRadius: 8,
+        padding: 7,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    picture: {
+        width: 50,
+        height: 50,
+        borderRadius: 20,
+        marginRight: 15,
+    },
+})

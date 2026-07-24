@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { AppState } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -10,6 +11,16 @@ const Stack = createNativeStackNavigator();
 export default function RootNavigator() {
 
     const [unlocked, setUnlocked] = useState(false);
+
+    //lock when the app goes to the background
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', nextAppState => {
+            if (nextAppState === 'background') {
+                setUnlocked(false);
+            }
+        });
+        return () => subscription.remove();
+    }, []);
 
     return (
         <NavigationContainer>
