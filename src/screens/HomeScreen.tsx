@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef} from 'react';
-import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, Pressable } from 'react-native';
 import { out } from "../api/axios";
 import { getTagColor } from "../services/tagColors";
+import { useNavigation } from "@react-navigation/native";
 
 
 export default function HomeScreen() {
@@ -10,6 +11,8 @@ export default function HomeScreen() {
 
     const pageRef = useRef(1);
     const isFetchingRef = useRef(false);
+
+    const navigation = useNavigation();
 
     async function loadUsers(pageNumber : number) {
 
@@ -53,7 +56,10 @@ export default function HomeScreen() {
             contentContainerStyle={styles.itemContainer}
             renderItem={({ item }) => (
 
-                <View style={styles.card}>
+                <Pressable
+                    style={styles.card}
+                    onPress={() =>  navigation.navigate("EditUser")}
+                >
 
                     <View style={styles.title}>
                         <Image
@@ -81,7 +87,7 @@ export default function HomeScreen() {
                             </View>
                         ))}
                     </View>
-                </View>
+                </Pressable>
             )}
             onEndReached={() => {loadUsers(pageRef.current + 1); }}
             onEndReachedThreshold={0.5}
