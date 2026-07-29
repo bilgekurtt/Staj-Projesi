@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef} from 'react';
+import React, { useCallback, useState, useRef} from 'react';
 import { View, Text, FlatList, StyleSheet, Image, Pressable } from 'react-native';
 import { out } from "../api/axios";
 import { getTagColor } from "../services/tagColors";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 
 
 export default function HomeScreen() {
@@ -36,16 +36,24 @@ export default function HomeScreen() {
 
             pageRef.current = pageNumber;
 
+            //reached the end of pages?
             if (pageNumber >= response.pagination.totalPages) return;
         } finally {
             isFetchingRef.current = false;
         }
     }
 
-    //call once when the components mounts on the screen
-    useEffect(() => {
-        loadUsers(1);
-    }, []);
+    //call everytime the screen renders (refresh when focused)
+    useFocusEffect(
+        useCallback(() => {
+            //perform side effect
+            pageRef.current = 1;
+            loadUsers(1);
+            return () => {
+                //do something when the screen is unfocused
+            };
+        }, [])
+    );
 
     return (
         <FlatList
@@ -54,11 +62,25 @@ export default function HomeScreen() {
             ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
             style={styles.container}
             contentContainerStyle={styles.itemContainer}
+
+            ListHeaderComponent={
+                <View>
+                    <Pressable
+                        onPress={() => navigation.navigate("EditUser")}
+                        style={styles.button }
+                    >
+                        <Text style={{color: "white"} }>ADD USER</Text>
+                    </Pressable>
+                </View>
+            }
+
             renderItem={({ item }) => (
 
                 <Pressable
                     style={styles.card}
-                    onPress={() =>  navigation.navigate("EditUser")}
+
+                    //send user object to edit screen inside route.params
+                    onPress={() => navigation.navigate("EditUser", {user: item})}
                 >
 
                     <View style={styles.title}>
@@ -103,7 +125,7 @@ const styles = StyleSheet.create({
     },
     itemContainer: {
         padding: 10,
-        marginTop: 230,
+        marginTop: 50,
     },
     tagBox: {
         flexDirection: 'row',
@@ -135,4 +157,14 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginRight: 15,
     },
+    button: {
+        backgroundColor: '#90D08A',
+        width: 150,
+        padding: 10,
+        borderRadius: 8,
+        marginBottom: 10,
+        elevation: 2,
+        flexDirection: 'row',
+        justifyContent: 'center'
+    }
 })
