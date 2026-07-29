@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AppState } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -28,11 +28,25 @@ export default function RootNavigator() {
 
     const [unlocked, setUnlocked] = useState(false);
 
+    let backgroundTime = useRef(null);
+
     //lock when the app goes to the background
     useEffect(() => {
         const subscription = AppState.addEventListener('change', nextAppState => {
-            if (nextAppState === 'background') {
-                setUnlocked(false);
+            if (nextAppState === "background") {
+                backgroundTime.current = Date.now();
+            }
+
+            //wait 5 seconds before locking the app
+            if (nextAppState === "active" && backgroundTime.current) {
+
+                const elapsed = Date.now() - backgroundTime.current;
+
+                if (elapsed > 5000) {
+                    setUnlocked(false);
+                }
+
+                backgroundTime.current = null;
             }
         });
         return () => subscription.remove();

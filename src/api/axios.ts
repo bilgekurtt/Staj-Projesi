@@ -44,7 +44,7 @@ export const out = {
             ); 
             return response.data;
         },
-        add: async (id: string, userData: any) => {
+        add: async (userData: any) => {
             const response = await api.post(
                 "/api/users",
                 userData

@@ -36,13 +36,14 @@ export default function HomeScreen() {
 
             pageRef.current = pageNumber;
 
+            //reached the end of pages?
             if (pageNumber >= response.pagination.totalPages) return;
         } finally {
             isFetchingRef.current = false;
         }
     }
 
-    //call everytime the screen renders
+    //call everytime the screen renders (refresh when focused)
     useFocusEffect(
         useCallback(() => {
             //perform side effect
