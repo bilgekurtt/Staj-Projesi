@@ -178,7 +178,7 @@ export default function EditScreen({ route }) {
                 }}
             />    
                 <View style={styles.tagBox}>
-                    {user.tags.map((tag: any) => (
+                    {user?.tags.map((tag: any) => (
                         <View
                             key={tag._id}
                             style={[
@@ -265,7 +265,6 @@ const styles = StyleSheet.create({
     },
     tagBox: {
         flexDirection: 'row',
-        flex: 'wrap'
     },
     tag: {
         paddingHorizontal: 12,
