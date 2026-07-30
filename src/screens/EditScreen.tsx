@@ -1,10 +1,12 @@
 ﻿import { View, Text, TextInput, StyleSheet, Pressable, Image } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { out } from "../api/axios";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { getTagColor } from "../services/tagColors";
 import { MultiSelect } from 'react-native-element-dropdown';
+import { Tag } from '../types/tag.types';
+import { addUser, updateUser } from '../api/users.api';
+import { getTags } from '../api/tags.api';
 
 export default function EditScreen({ route }) {
 
@@ -26,14 +28,14 @@ export default function EditScreen({ route }) {
     const [hidePassword, setHidePassword] = useState(true);
     const [message, setMessage] = useState("");
     const [selectedTags, setSelectedTags] = useState(
-            user?.tags?.map(( tag: any) => tag._id) ?? []
+            user?.tags?.map(( tag: Tag) => tag._id) ?? []
     );
 
     const isEditing = !!user;
 
     async function editUser() {
         try {
-            await out.users.update(user._id, {
+            await updateUser(user._id, {
                 name,
                 lastname,
                 email,
@@ -52,7 +54,7 @@ export default function EditScreen({ route }) {
 
     async function createUser() {
         try {
-            await out.users.add({
+            await addUser({
                 name,
                 lastname,
                 email,
@@ -99,7 +101,7 @@ export default function EditScreen({ route }) {
 
     useEffect(() => {
         async function loadTags() {
-            const response = await out.tags.get();
+            const response = await getTags();
             setTags(response.data);
         }
         loadTags();
@@ -178,7 +180,7 @@ export default function EditScreen({ route }) {
                 }}
             />    
                 <View style={styles.tagBox}>
-                    {user?.tags.map((tag: any) => (
+                    {user?.tags.map((tag: Tag) => (
                         <View
                             key={tag._id}
                             style={[

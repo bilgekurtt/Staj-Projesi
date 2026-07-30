@@ -1,8 +1,9 @@
-import React, { useCallback, useState, useRef} from 'react';
+﻿import React, { useCallback, useState, useRef} from 'react';
 import { View, Text, FlatList, StyleSheet, Image, Pressable } from 'react-native';
-import { out } from "../api/axios";
+import { getUsers } from "../api/users.api";
 import { getTagColor } from "../services/tagColors";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { Tag } from "../types/tag.types";
 
 
 export default function HomeScreen() {
@@ -21,7 +22,7 @@ export default function HomeScreen() {
         isFetchingRef.current = true;
 
         try {
-            const response = await out.users.get(pageNumber);
+            const response = await getUsers(pageNumber);
 
             setUsers(previous => {
                 const map = new Map();
@@ -69,7 +70,7 @@ export default function HomeScreen() {
                         onPress={() => navigation.navigate("EditUser")}
                         style={styles.button }
                     >
-                        <Text style={{color: "white"} }>ADD USER</Text>
+                        <Text style={{color: "white"} }>Kullanıcı Ekle</Text>
                     </Pressable>
                 </View>
             }
@@ -97,7 +98,7 @@ export default function HomeScreen() {
                     <Text style={{color: "gray"}}>{item.description}</Text>
 
                     <View style={styles.tagBox}>
-                        {item.tags.map((tag: any) => (
+                        {item.tags.map((tag: Tag) => (
                             <View
                                 key={tag._id}
                                 style={[
