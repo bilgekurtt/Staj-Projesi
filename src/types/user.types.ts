@@ -1,4 +1,6 @@
-import { Tag } from './tag';
+//not finished
+
+import { Tag } from './tag.types';
 export interface LocationCoordinates {
     latitude: number;
     longitude: number;

@@ -1,10 +1,11 @@
 ﻿import { View, Text, TextInput, StyleSheet, Pressable, Image } from 'react-native';
 import React, { useState, useEffect } from 'react';
+
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { getTagColor } from "../services/tagColors";
+import { getTagColor } from "../utils/tagColors";
 import { MultiSelect } from 'react-native-element-dropdown';
-import { Tag } from '../types/tag.types';
+
 import { addUser, updateUser } from '../api/users.api';
 import { getTags } from '../api/tags.api';
 
@@ -28,7 +29,7 @@ export default function EditScreen({ route }) {
     const [hidePassword, setHidePassword] = useState(true);
     const [message, setMessage] = useState("");
     const [selectedTags, setSelectedTags] = useState(
-            user?.tags?.map(( tag: Tag) => tag._id) ?? []
+            user?.tags?.map(( tag: any) => tag._id) ?? []
     );
 
     const isEditing = !!user;
@@ -180,7 +181,7 @@ export default function EditScreen({ route }) {
                 }}
             />    
                 <View style={styles.tagBox}>
-                    {user?.tags.map((tag: Tag) => (
+                    {user?.tags.map((tag: any) => (
                         <View
                             key={tag._id}
                             style={[

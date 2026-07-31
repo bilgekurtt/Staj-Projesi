@@ -1,3 +1,5 @@
+//this file's purpose: color assignment for tags
+
 const TAG_COLORS = [
     "#FFB3BA",
     "#FFDFBA",

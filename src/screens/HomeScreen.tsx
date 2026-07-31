@@ -1,7 +1,7 @@
 ﻿import React, { useCallback, useState, useRef} from 'react';
 import { View, Text, FlatList, StyleSheet, Image, Pressable } from 'react-native';
 import { getUsers } from "../api/users.api";
-import { getTagColor } from "../services/tagColors";
+import { getTagColor } from "../utils/tagColors";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Tag } from "../types/tag.types";
 
