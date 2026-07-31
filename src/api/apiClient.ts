@@ -1,4 +1,4 @@
-//entry point for all http communication with the backend
+﻿//entry point for all http communication with the backend
 //its purpose: manage the axios instance and config, register interceptors
 
 import axios from 'axios';
@@ -23,3 +23,27 @@ apiClient.interceptors.request.use((config) => {
 }, function (error) {
     return Promise.reject(error);
 });
+
+//runs at every response, normalizes error
+apiClient.interceptors.response.use(
+    response => response,
+    error => {
+        const status = error.status?.status;
+
+        let message = "Beklenmeyen hata.";
+
+        switch (status) {
+            case 401:
+                message = "Yetkisiz.";
+                break;
+            case 404:
+                message = "Kullanıcı bulunamadı.";
+                break;
+            case 500:
+                message = "Sunucu hatası.";
+                break;
+        }
+
+        return Promise.reject(new Error(message));
+    }
+);

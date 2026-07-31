@@ -47,8 +47,8 @@ export default function EditScreen({ route }) {
             });
             console.log(`User ${user._id} updated.`);
             setMessage("Kullanıcı başarıyla güncellendi");
-        } catch (error) {
-            console.error(error);
+        } catch (error: any) {
+            console.error(error.message);
             setMessage("Lütfen bilgileri kontrol ediniz.");
         } 
     }
@@ -71,8 +71,8 @@ export default function EditScreen({ route }) {
             });
             console.log("Yeni kullanıcı oluşturuldu.");
             setMessage("Yeni kullanıcı başarıyla oluşturuldu!");
-        } catch (error) {
-            console.error(error);
+        } catch (error: any) {
+            console.error(error.message);
             setMessage("Lütfen bilgileri kontrol ediniz.");
         }
     }
