@@ -2,7 +2,7 @@
 //its purpose: manage the axios instance and config, register interceptors
 
 import axios from 'axios';
-import { getToken } from "../services/tokenService";
+import { getToken } from "../store/tokenStore";
 
 export const apiClient = axios.create({
     baseURL: "https://aok.erpstok.com",
