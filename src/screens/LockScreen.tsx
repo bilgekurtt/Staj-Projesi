@@ -1,20 +1,23 @@
-﻿import React, { useState, useRef } from 'react';
+﻿//purpose: ui for the lock screen + authentication logic
+
+import React, { useState, useRef } from 'react';
 import { View, Text, TextInput, StyleSheet, SafeAreaView } from 'react-native';
+
 import { setToken } from '../store/tokenStore';
 import { login } from "../api/auth.api";
 
-interface PinInputProps {
+interface LockScreenProps {
     onUnlock: () => void;
 }
 
-const LockScreen = ({ onUnlock }: PinInputProps) => { 
+const LockScreen = ({ onUnlock }: LockScreenProps) => { 
 
     const [pin, setPin] = useState<string[]>(['', '', '', '']);
-    const [message, setMessage] = useState<string>('');
+    const [errorMessage, setErrorMessage] = useState<string>('');
 
-    //this array will contain either a TextInput ref or a null value
     const inputsRef = useRef<(TextInput | null)[]>([]);
 
+    //doesnt repeat or get recalled anywhere so it lives here for now
     const verifyPin = async (currentPinArray: string[]) => {
  
         const fullPin = currentPinArray.join('');
@@ -25,7 +28,7 @@ const LockScreen = ({ onUnlock }: PinInputProps) => {
                 setToken(response.token);
                 onUnlock();
             } catch {
-                setMessage("Yanlış şifre. Tekrar Deneyin!");
+                setErrorMessage("Yanlış şifre. Tekrar Deneyin!");
                 resetPin();
             }
         }
@@ -51,6 +54,7 @@ const LockScreen = ({ onUnlock }: PinInputProps) => {
         verifyPin(newPin);
     };
 
+    //change focus when user deletes a digit
     const handleKeyPress = (index: number) => {
 
         if (!pin[index] && index > 0) {
@@ -86,7 +90,7 @@ const LockScreen = ({ onUnlock }: PinInputProps) => {
                 ))}
             </View>
 
-            {message ? <Text style={styles.messageText}>{message}</Text> : null}
+            {errorMessage ? <Text style={styles.messageText}>{errorMessage}</Text> : null}
         </SafeAreaView>
     );
 };

@@ -21,7 +21,6 @@ export function useAppLock(onLock: () => void) {
                     nextAppState === "active" &&
                     backgroundTime.current
                 ) {
-
                     const elapsed = Date.now() - backgroundTime.current;
 
                     if (elapsed > 5000) {

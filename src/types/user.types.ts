@@ -10,10 +10,10 @@ export interface User {
     name: string;
     lastname: string;
     email: string;
-    password: string;
-    description: string;
-    avatarURL: string;
-    location: string;
-    locationCoordinates: LocationCoordinates;
-    tags: Tag[];
+    password?: string;
+    description?: string;
+    avatarURL?: string;
+    location?: string;
+    locationCoordinates?: LocationCoordinates;
+    tags?: Tag[];
 }
