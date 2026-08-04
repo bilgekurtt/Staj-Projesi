@@ -1,72 +1,24 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { AppState } from 'react-native';
+//purpose: choose which navigation to go to
+
+import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import LockScreen from "../screens/LockScreen";
-import HomeScreen from "../screens/HomeScreen";
-import EditScreen from '../screens/EditScreen';
-
-const Stack = createNativeStackNavigator();
-
-function AppStack() {
-    return (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen
-                name="Home"
-                component={HomeScreen}
-            />
-            <Stack.Screen
-                name="EditUser"
-                component={EditScreen}
-            />
-        </Stack.Navigator>
-    );
-}
-
+import AuthNavigator from "./AuthNavigator";
+import AppNavigator from "./AppNavigator";
+import { useAppLock } from '../hooks/useAppLock';
 export default function RootNavigator() {
 
     const [unlocked, setUnlocked] = useState(false);
 
-    let backgroundTime = useRef(null);
-
-    //lock when the app goes to the background
-    useEffect(() => {
-        const subscription = AppState.addEventListener('change', nextAppState => {
-            if (nextAppState === "background") {
-                backgroundTime.current = Date.now();
-            }
-
-            //wait 5 seconds before locking the app
-            if (nextAppState === "active" && backgroundTime.current) {
-
-                const elapsed = Date.now() - backgroundTime.current;
-
-                if (elapsed > 5000) {
-                    setUnlocked(false);
-                }
-
-                backgroundTime.current = null;
-            }
-        });
-        return () => subscription.remove();
-    }, []);
+    useAppLock(() => setUnlocked(false));
 
     return (
         <NavigationContainer>
-            {unlocked ? (
-                <AppStack />
-            ) : (
-                <Stack.Navigator screenOptions={{ headerShown: false }}>
-                    <Stack.Screen name="Lock">
-                        {() => (
-                            <LockScreen
-                                onUnlock={() => setUnlocked(true)}
-                            />
-                        )}
-                    </Stack.Screen>
-                </Stack.Navigator>
-            )}
+            {unlocked ?
+                <AppNavigator /> : <AuthNavigator
+                    onUnlock={() => setUnlocked(true)}
+                />
+            }
         </NavigationContainer>
     );
 }

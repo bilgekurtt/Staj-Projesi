@@ -1,13 +1,24 @@
-import React, { useCallback, useState, useRef} from 'react';
+﻿//purpose: ui for the home screen
+
+import React, { useCallback, useState, useRef } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, Pressable } from 'react-native';
-import { out } from "../api/axios";
-import { getTagColor } from "../services/tagColors";
+
+import { getUsers } from "../api/users.api";
+
+import { getTagColor } from "../utils/tagColors";
+import { mergeUsers } from "../utils/mergeUsers";
+
+import { Tag } from "../types/tag.types";
+import { User } from '../types/user.types';
+
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
+
+
 
 
 export default function HomeScreen() {
 
-    const [users, setUsers] = useState<any[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
 
     const pageRef = useRef(1);
     const isFetchingRef = useRef(false);
@@ -21,18 +32,10 @@ export default function HomeScreen() {
         isFetchingRef.current = true;
 
         try {
-            const response = await out.users.get(pageNumber);
+            const response = await getUsers(pageNumber);
 
-            setUsers(previous => {
-                const map = new Map();
-
-                //append the new elements to the already existing ones
-                [...previous, ...response.data].forEach(user => {
-                    map.set(user._id, user);
-                });
-
-                return Array.from(map.values());
-            });
+            //merge the lists without duplicates
+            setUsers(previous => mergeUsers(previous, response.data));
 
             pageRef.current = pageNumber;
 
@@ -64,13 +67,27 @@ export default function HomeScreen() {
             contentContainerStyle={styles.itemContainer}
 
             ListHeaderComponent={
-                <View>
+                <View style={styles.header}>
+
                     <Pressable
                         onPress={() => navigation.navigate("EditUser")}
                         style={styles.button }
                     >
-                        <Text style={{color: "white"} }>ADD USER</Text>
+                        <Text style={styles.buttonText}>Kullanıcı Ekle</Text>
                     </Pressable>
+
+                    <Pressable
+                        style={[styles.button, styles.tagButton] }
+                    >
+                        <Text style={styles.buttonText}>Etiketler</Text>
+                    </Pressable>
+
+                    <Pressable
+                        style={[styles.button, styles.exitButton] }
+                    >
+                        <Text style={styles.buttonText}>Çıkış</Text>
+                    </Pressable>
+
                 </View>
             }
 
@@ -89,15 +106,15 @@ export default function HomeScreen() {
                         source={{uri: item.avatarURL }}
                         />
                         <Text
-                            style={{ fontWeight: "bold", fontSize: 16}}>
+                            style={styles.titleText}>
                             {item.name} {item.lastname}
                         </Text>
                     </View>
 
-                    <Text style={{color: "gray"}}>{item.description}</Text>
+                    <Text style={styles.descriptionText}>{item.description}</Text>
 
                     <View style={styles.tagBox}>
-                        {item.tags.map((tag: any) => (
+                        {item.tags.map((tag: Tag) => (
                             <View
                                 key={tag._id}
                                 style={[
@@ -122,6 +139,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#B6D0E2',
+    },
+    header: {
+        flexDirection: "row",
+        justifyContent: "space-between"
     },
     itemContainer: {
         padding: 10,
@@ -158,13 +179,30 @@ const styles = StyleSheet.create({
         marginRight: 15,
     },
     button: {
-        backgroundColor: '#90D08A',
-        width: 150,
+        backgroundColor: "#8ad096",
+        width: 120,
         padding: 10,
         borderRadius: 8,
         marginBottom: 10,
+        marginRight: 10,
         elevation: 2,
-        flexDirection: 'row',
-        justifyContent: 'center'
-    }
+        textAlign: "center"
+    },
+    tagButton: {
+        backgroundColor: "#8aabd0",
+    },
+    exitButton: {
+        backgroundColor: "#d08a8a",
+        width: 60,
+    },
+    buttonText: {
+        color: "white",
+    },
+    descriptionText: {
+        color: "gray"
+    },
+    titleText: {
+        fontWeight: "bold",
+        fontSize: 16
+    },
 })

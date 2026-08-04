@@ -1,10 +1,18 @@
-﻿import { View, Text, TextInput, StyleSheet, Pressable, Image } from 'react-native';
+﻿//purpose: ui for the user form screen
+
+import { View, Text, TextInput, StyleSheet, Pressable, Image } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { out } from "../api/axios";
+
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { getTagColor } from "../services/tagColors";
+import { getTagColor } from "../utils/tagColors";
 import { MultiSelect } from 'react-native-element-dropdown';
+
+import { addUser, updateUser } from '../api/users.api';
+import { getTags } from '../api/tags.api';
+
+import { Tag } from "../types/tag.types";
+
 
 export default function EditScreen({ route }) {
 
@@ -21,53 +29,48 @@ export default function EditScreen({ route }) {
     const [description, setDescription] = useState(user?.description ?? "");
     const [avatarURL, setAvatarURL] = useState(user?.avatarURL ?? "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y");
     const [location, setLocation] = useState(user?.location ?? "");
-    const [tags, setTags] = useState<any[]>([]);
+    const [tags, setTags] = useState<Tag[]>([]);
     
     const [hidePassword, setHidePassword] = useState(true);
     const [message, setMessage] = useState("");
     const [selectedTags, setSelectedTags] = useState(
-            user?.tags?.map(( tag: any) => tag._id) ?? []
+            user?.tags?.map((tag: Tag) => tag._id) ?? []
     );
 
-    const isEditing = !!user;
+    const isEditing = !!user
 
-    async function editUser() {
+    async function saveUser() {
         try {
-            await out.users.update(user._id, {
-                name,
-                lastname,
-                email,
-                description,
-                avatarURL,
-                location,
-                tags: selectedTags
-            });
-            console.log(`User ${user._id} updated.`);
-            setMessage("Kullanıcı başarıyla güncellendi");
-        } catch (error) {
-            console.error(error);
-            setMessage("Lütfen bilgileri kontrol ediniz.");
-        } 
-    }
+            if (isEditing) {
+                await updateUser(user._id, {
+                    name,
+                    lastname,
+                    email,
+                    description,
+                    avatarURL,
+                    location,
+                    tags: selectedTags,
+                });
 
-    async function createUser() {
-        try {
-            await out.users.add({
-                name,
-                lastname,
-                email,
-                password,
-                description,
-                avatarURL,
-                location,
-                locationCoordinates: {
-                    latitude: 0,
-                    longitude: 0,
-                },
-                tags: selectedTags
-            });
-            console.log("Yeni kullanıcı oluşturuldu.");
-            setMessage("Yeni kullanıcı başarıyla oluşturuldu!");
+                setMessage("Kullanıcı başarıyla güncellendi!");
+            } else {
+                await addUser({
+                    name,
+                    lastname,
+                    email,
+                    password,
+                    description,
+                    avatarURL,
+                    location,
+                    locationCoordinates: {
+                        latitude: 0,
+                        longitude: 0,
+                    },
+                    tags: selectedTags,
+                });
+
+                setMessage("Yeni kullanıcı başarıyla oluşturuldu!");
+            }
         } catch (error) {
             console.error(error);
             setMessage("Lütfen bilgileri kontrol ediniz.");
@@ -99,7 +102,7 @@ export default function EditScreen({ route }) {
 
     useEffect(() => {
         async function loadTags() {
-            const response = await out.tags.get();
+            const response = await getTags();
             setTags(response.data);
         }
         loadTags();
@@ -178,7 +181,7 @@ export default function EditScreen({ route }) {
                 }}
             />    
                 <View style={styles.tagBox}>
-                    {user?.tags.map((tag: any) => (
+                    {user?.tags.map((tag: Tag) => (
                         <View
                             key={tag._id}
                             style={[
@@ -203,7 +206,7 @@ export default function EditScreen({ route }) {
                         keyboardType="number-pad"
                     />
                     <Pressable
-                        style={styles.button }
+                        style={styles.button}
                         onPress={() => setHidePassword(!hidePassword)}
                     >
                         <Text style={{color: "red"}}>{hidePassword ? "Şifreyi Göster": "Şifreyi Gizle"}</Text>
@@ -211,16 +214,17 @@ export default function EditScreen({ route }) {
                 </View>
             )}
 
+            {message ? <Text style={styles.message}>{message}</Text> : null}
+
             <Pressable
-                onPress={isEditing ? editUser : createUser}
+                onPress={saveUser}
                 style={styles.button}
             >
-                <Text style={{ fontSize: 16, color: "white" }}>
+                <Text style={styles.buttonText}>
                     {isEditing ? "Kaydet" : "Oluştur"}
                 </Text>
             </Pressable>
 
-            {message ? <Text style={{textAlign: 'center'} }>{message}</Text> : null}
         </KeyboardAwareScrollView>
     );
 }
@@ -263,6 +267,10 @@ const styles = StyleSheet.create({
         padding: 10,
         paddingHorizontal: 20
     },
+    buttonText: {
+        fontSize: 16,
+        color: "white"
+    },
     tagBox: {
         flexDirection: 'row',
     },
@@ -279,5 +287,9 @@ const styles = StyleSheet.create({
         borderBottomColor: 'gray',
         borderBottomWidth: 0.5,
         borderRadius: 8
+    },
+    message: {
+        textAlign: "center",
+        marginTop: 12
     },
 })

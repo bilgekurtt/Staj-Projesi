@@ -1,4 +1,4 @@
-//holds the token, if login succeeds setToken(response.token);
+//this file's purpose: store the token
 
 let token = "";
 
