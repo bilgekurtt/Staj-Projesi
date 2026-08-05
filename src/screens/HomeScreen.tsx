@@ -1,7 +1,7 @@
 ﻿//purpose: ui for the home screen
 
 import React, { useCallback, useState, useRef } from 'react';
-import { View, Text, StyleSheet, Image, Pressable, Alert, BackHandler } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, Pressable, Alert } from 'react-native';
 
 import { getUsers,deleteUser } from "../api/users.api";
 
