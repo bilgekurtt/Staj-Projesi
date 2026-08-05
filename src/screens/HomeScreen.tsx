@@ -1,9 +1,9 @@
 ﻿//purpose: ui for the home screen
 
 import React, { useCallback, useState, useRef } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable, Alert, BackHandler } from 'react-native';
 
-import { getUsers } from "../api/users.api";
+import { getUsers,deleteUser } from "../api/users.api";
 
 import { getTagColor } from "../utils/tagColors";
 import { mergeUsers } from "../utils/mergeUsers";
@@ -12,11 +12,15 @@ import { Tag } from "../types/tag.types";
 import { User } from '../types/user.types';
 
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import SwipeableFlatList from "rn-gesture-swipeable-flatlist/reanimated";
 
 
 
+interface HomeScreenProps {
+    onLock: () => void;
+}
 
-export default function HomeScreen() {
+export default function HomeScreen({ onLock }: HomeScreenProps) {
 
     const [users, setUsers] = useState<User[]>([]);
 
@@ -24,6 +28,7 @@ export default function HomeScreen() {
     const isFetchingRef = useRef(false);
 
     const navigation = useNavigation();
+
 
     async function loadUsers(pageNumber : number) {
 
@@ -46,6 +51,38 @@ export default function HomeScreen() {
         }
     }
 
+    async function deleteUserById(userId: string) {
+        try {
+            await deleteUser(userId);
+
+            setUsers(previous => previous.filter(user => user._id !== userId));
+        } catch (error) {
+            console.error(error);
+            Alert.alert("Kullanıcı silinirken bir sorun oluştu.");
+        }
+    }
+
+    async function confirmDelete(user: User) {
+
+        Alert.alert(
+            "Kullanıcı Sil",
+            "Bu kullanıcıyı silmek istediğinize emin misiniz?",
+            [
+                {
+                    text: "İptal",
+                    style: "cancel",
+                },
+                {
+                    text: "Sil",
+                    style: "destructive",
+                    onPress: () => deleteUserById(user._id),
+                },
+            ],
+            { cancelable: true }
+        );
+         
+    };
+
     //call everytime the screen renders (refresh when focused)
     useFocusEffect(
         useCallback(() => {
@@ -59,12 +96,21 @@ export default function HomeScreen() {
     );
 
     return (
-        <FlatList
+        <SwipeableFlatList
             data={users}
             keyExtractor={(item) => item._id}
             ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
             style={styles.container}
             contentContainerStyle={styles.itemContainer}
+
+            renderRightActions={(item: User) => (
+                <Pressable
+                    onPress={() => confirmDelete(item)}
+                    style={[styles.button, styles.exitButton]}
+                >
+                    <Text style={styles.buttonText}>Sil</Text>
+                </Pressable>
+            ) }
 
             ListHeaderComponent={
                 <View style={styles.header}>
@@ -83,6 +129,7 @@ export default function HomeScreen() {
                     </Pressable>
 
                     <Pressable
+                        onPress={onLock}
                         style={[styles.button, styles.exitButton] }
                     >
                         <Text style={styles.buttonText}>Çıkış</Text>
@@ -197,6 +244,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: "white",
+        textAlign: "center",
     },
     descriptionText: {
         color: "gray"

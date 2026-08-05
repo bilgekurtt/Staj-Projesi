@@ -5,13 +5,20 @@ import EditScreen from '../screens/EditScreen';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const Stack = createNativeStackNavigator();
-export default function AppNavigator() {
+
+interface AppNavigatorProps {
+    onLock: () => void;
+}
+export default function AppNavigator({ onLock }: AppNavigatorProps) {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen
                 name="Home"
-                component={HomeScreen}
-            />
+            >
+                {() => (
+                    <HomeScreen onLock={onLock} />
+                )}
+            </Stack.Screen>
             <Stack.Screen
                 name="EditUser"
                 component={EditScreen}
