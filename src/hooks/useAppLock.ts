@@ -23,7 +23,7 @@ export function useAppLock(onLock: () => void) {
                 ) {
                     const timePassed = Date.now() - backgroundTime.current;
 
-                    if (timePassed > 5000) {
+                    if (elapsed > 0) {
                         onLock();
                     }
 

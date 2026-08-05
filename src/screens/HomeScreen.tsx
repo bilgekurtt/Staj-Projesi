@@ -16,7 +16,11 @@ import SwipeableFlatList from "rn-gesture-swipeable-flatlist/reanimated";
 
 
 
-export default function HomeScreen() {
+interface HomeScreenProps {
+    onLock: () => void;
+}
+
+export default function HomeScreen({ onLock }: HomeScreenProps) {
 
     const [users, setUsers] = useState<User[]>([]);
 
@@ -24,7 +28,6 @@ export default function HomeScreen() {
     const isFetchingRef = useRef(false);
 
     const navigation = useNavigation();
-
 
 
     async function loadUsers(pageNumber : number) {
@@ -80,7 +83,6 @@ export default function HomeScreen() {
          
     };
 
-
     //call everytime the screen renders (refresh when focused)
     useFocusEffect(
         useCallback(() => {
@@ -127,7 +129,7 @@ export default function HomeScreen() {
                     </Pressable>
 
                     <Pressable
-                        onPress={() => navigation.navigate("Lock")}
+                        onPress={onLock}
                         style={[styles.button, styles.exitButton] }
                     >
                         <Text style={styles.buttonText}>Çıkış</Text>

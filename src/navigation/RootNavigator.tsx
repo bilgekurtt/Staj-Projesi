@@ -15,9 +15,9 @@ export default function RootNavigator() {
     return (
         <NavigationContainer>
             {unlocked ?
-                <AppNavigator /> : <AuthNavigator
-                    onUnlock={() => setUnlocked(true)}
-                />
+                <AppNavigator onLock={() => setUnlocked(false)} />
+                :
+                <AuthNavigator onUnlock={() => setUnlocked(true)} />
             }
         </NavigationContainer>
     );
