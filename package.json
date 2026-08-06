@@ -25,6 +25,7 @@
     "react-native-reanimated": "^4.5.3",
     "react-native-safe-area-context": "^5.8.0",
     "react-native-screens": "^4.26.2",
+    "react-native-session-timeout": "^0.1.6",
     "react-native-worklets": "^0.11.3",
     "react-redux": "^9.3.0",
     "rn-gesture-swipeable-flatlist": "^2.5.0"
