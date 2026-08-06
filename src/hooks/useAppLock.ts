@@ -21,7 +21,7 @@ export function useAppLock(onLock: () => void) {
                     nextAppState === "active" &&
                     backgroundTime.current
                 ) {
-                    const timePassed = Date.now() - backgroundTime.current;
+                    const elapsed = Date.now() - backgroundTime.current;
 
                     if (elapsed > 0) {
                         onLock();

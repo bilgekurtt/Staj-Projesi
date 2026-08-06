@@ -1,7 +1,7 @@
 ﻿//purpose: ui for the home screen
 
 import React, { useCallback, useState, useRef } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, Pressable, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable, Alert } from 'react-native';
 
 import { getUsers,deleteUser } from "../api/users.api";
 
@@ -73,7 +73,7 @@ export default function HomeScreen({ onLock }: HomeScreenProps) {
                     style: "cancel",
                 },
                 {
-                    text: "Sil",
+                    text: "Sİl",
                     style: "destructive",
                     onPress: () => deleteUserById(user._id),
                 },
@@ -123,7 +123,7 @@ export default function HomeScreen({ onLock }: HomeScreenProps) {
                     </Pressable>
 
                     <Pressable
-                        style={[styles.button, styles.tagButton] }
+                        style={[styles.button, styles.tagButton]}
                     >
                         <Text style={styles.buttonText}>Etiketler</Text>
                     </Pressable>
