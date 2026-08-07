@@ -1,11 +1,10 @@
 //purpose: tell the caller when the app is locked
 
-import { useEffect, useRef } from "react";
+import { useEffect} from "react";
 import { AppState } from "react-native";
+import { appStateFlag } from "../flags/appStateFlag";
 
 export function useAppLock(onLock: () => void) {
-
-    const backgroundTime = useRef<number | null>(null);
 
     useEffect(() => {
 
@@ -13,22 +12,14 @@ export function useAppLock(onLock: () => void) {
             "change",
             nextAppState => {
 
-                if (nextAppState === "background") {
-                    backgroundTime.current = Date.now();
-                }
-
-                if (
-                    nextAppState === "active" &&
-                    backgroundTime.current
-                ) {
-                    const elapsed = Date.now() - backgroundTime.current;
-
-                    if (elapsed > 0) {
-                        onLock();
+                if (nextAppState === 'background') {
+                    if (appStateFlag.isPickerOpen) {
+                        console.log("Ignoring background state caused by image picker");
+                        return;
                     }
 
-                    backgroundTime.current = null;
-                }
+                    onLock();
+                }                
             }
         );
 

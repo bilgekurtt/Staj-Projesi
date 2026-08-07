@@ -13,6 +13,8 @@ import { getTags } from '../api/tags.api';
 
 import { Tag } from "../types/tag.types";
 
+import { appStateFlag } from "../flags/appStateFlag";
+
 
 export default function EditScreen({ route }) {
 
@@ -82,17 +84,25 @@ export default function EditScreen({ route }) {
 
         const options = {
             mediaType: 'photo',
+            selectionLimit: 1,
             includeBase64: false,
             maxHeight: 500,
             maxWidth: 500,
             quality: 0.7,
         };
 
+        appStateFlag.isPickerOpen = true;
+
         launchImageLibrary(options, (response) => {
+
+            setTimeout(() => {
+                appStateFlag.isPickerOpen = false;
+            }, 500);
+
             if (response.didCancel) { 
                 console.log('User cancelled image picker');
-            } else if (response.error) {
-                console.log('Image picker error: ', response.error);
+            } else if (response.errorMessage) {
+                console.log('Image picker error: ', response.errorMessage);
             } else {
                 let imageUri = response.uri || response.assets?.[0]?.uri;
                 setAvatarURL(imageUri);
