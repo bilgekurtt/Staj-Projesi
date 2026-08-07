@@ -5,11 +5,11 @@ import { useSessionTimeout } from "react-native-session-timeout";
 export function TimeoutWarning() {
     const { isWarning, remainingTime, resetTimer } = useSessionTimeout();
 
-    useEffect(() => {
-        console.log(remainingTime);
-    }, [remainingTime]);
+    //useEffect(() => {
+    //    console.log(remainingTime);
+    //}, [remainingTime]);
 
-    if (!isWarning) return null;
+    //if (!isWarning) return null;
 
     return (
         <Modal visible={isWarning} transparent animationType="fade">
