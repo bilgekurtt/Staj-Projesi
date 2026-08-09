@@ -7,12 +7,14 @@ import { getUsers,deleteUser } from "../api/users.api";
 
 import { getTagColor } from "../utils/tagColors";
 import { mergeUsers } from "../utils/mergeUsers";
+import { confirmAction } from '../utils/confirmAction';
 
 import { Tag } from "../types/tag.types";
 import { User } from '../types/user.types';
 
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import SwipeableFlatList from "rn-gesture-swipeable-flatlist/reanimated";
+
 
 
 
@@ -55,33 +57,13 @@ export default function HomeScreen({ onLock }: HomeScreenProps) {
         try {
             await deleteUser(userId);
 
+            //refresh the list 
             setUsers(previous => previous.filter(user => user._id !== userId));
         } catch (error) {
             console.error(error);
             Alert.alert("Kullanıcı silinirken bir sorun oluştu.");
         }
     }
-
-    async function confirmDelete(user: User) {
-
-        Alert.alert(
-            "Kullanıcı Sil",
-            "Bu kullanıcıyı silmek istediğinize emin misiniz?",
-            [
-                {
-                    text: "İptal",
-                    style: "cancel",
-                },
-                {
-                    text: "Sİl",
-                    style: "destructive",
-                    onPress: () => deleteUserById(user._id),
-                },
-            ],
-            { cancelable: true }
-        );
-         
-    };
 
     //call everytime the screen renders (refresh when focused)
     useFocusEffect(
@@ -105,7 +87,13 @@ export default function HomeScreen({ onLock }: HomeScreenProps) {
 
             renderRightActions={(item: User) => (
                 <Pressable
-                    onPress={() => confirmDelete(item)}
+                    onPress={() =>
+                        confirmAction({
+                            title: "Kullanıcı Sil",
+                            message: "Bu kullanıcıyı silmek istediğinize emin misiniz?",
+                            onConfirm: () => deleteUserById(item._id),
+                        })
+                    }
                     style={[styles.button, styles.exitButton]}
                 >
                     <Text style={styles.buttonText}>Sil</Text>
@@ -123,6 +111,7 @@ export default function HomeScreen({ onLock }: HomeScreenProps) {
                     </Pressable>
 
                     <Pressable
+                        onPress={() => navigation.navigate("Tags")}
                         style={[styles.button, styles.tagButton]}
                     >
                         <Text style={styles.buttonText}>Etiketler</Text>

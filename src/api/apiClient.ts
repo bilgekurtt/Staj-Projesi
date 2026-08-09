@@ -28,7 +28,7 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
     response => response,
     error => {
-        const status = error.status?.status;
+        const status = error.response?.status;
 
         let message = "Beklenmeyen hata.";
 

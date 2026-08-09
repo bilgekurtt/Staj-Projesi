@@ -2,6 +2,8 @@
 
 import HomeScreen from "../screens/HomeScreen";
 import EditScreen from '../screens/EditScreen';
+import TagScreen from "../screens/TagScreen";
+
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const Stack = createNativeStackNavigator();
@@ -22,6 +24,10 @@ export default function AppNavigator({ onLock }: AppNavigatorProps) {
             <Stack.Screen
                 name="EditUser"
                 component={EditScreen}
+            />
+            <Stack.Screen
+                name="Tags"
+                component={TagScreen}
             />
         </Stack.Navigator>
     );
