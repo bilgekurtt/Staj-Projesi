@@ -1,7 +1,7 @@
 ﻿//purpose: ui for the user form screen
 
 import { View, Text, TextInput, StyleSheet, Pressable, Image } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -14,6 +14,9 @@ import { getTags } from '../api/tags.api';
 import { Tag } from "../types/tag.types";
 
 import { appStateFlag } from "../flags/appStateFlag";
+
+import { ThemeContext } from "../context/ThemeContext";
+import { getThemeColors } from "../utils/themeColors";
 
 
 export default function EditScreen({ route }) {
@@ -40,6 +43,9 @@ export default function EditScreen({ route }) {
     );
 
     const isEditing = !!user
+
+    const { theme } = useContext(ThemeContext)!;
+    const colors = getThemeColors(theme);
 
     async function saveUser() {
         try {
@@ -120,12 +126,18 @@ export default function EditScreen({ route }) {
 
     return (
         <KeyboardAwareScrollView
-            style={styles.container}
+            style={[
+                styles.container,
+                { backgroundColor: colors.background }
+            ]}
             contentContainerStyle={styles.content}
             enableOnAndroid={true}
             extraScrollHeight={100}
         >
-            <Text style={styles.header}>
+            <Text style={[
+                styles.header,
+                { color: colors.text }
+            ]}>
                 {isEditing ? "Profili Düzenle" : "Yeni Kullanıcı" }
             </Text>
 
@@ -138,44 +150,74 @@ export default function EditScreen({ route }) {
                 />
             </Pressable>
 
-            <Text style={styles.label }>İsim</Text>
+            <Text style={[styles.label, { color: colors.text }]}>İsim</Text>
             <TextInput
                 value={name}
-                style={styles.input}
+                style={[
+                    styles.input,
+                    {
+                        backgroundColor: colors.input,
+                        color: colors.text,
+                    }
+                ]}
                 onChangeText={setName}
             />
 
-            <Text style={styles.label}>Soyisim</Text>
+            <Text style={[styles.label, { color: colors.text }]}>Soyisim</Text>
             <TextInput
                 value={lastname}
-                style={styles.input}
+                style={[
+                    styles.input,
+                    {
+                        backgroundColor: colors.input,
+                        color: colors.text,
+                    }
+                ]}
                 onChangeText={setLastname}
             />
 
-            <Text style={styles.label}>Email</Text>
+            <Text style={[styles.label, { color: colors.text }]}>Email</Text>
             <TextInput
                 value={email}
-                style={styles.input}
+                style={[
+                    styles.input,
+                    {
+                        backgroundColor: colors.input,
+                        color: colors.text,
+                    }
+                ]}
                 onChangeText={setEmail}
             />
 
-            <Text style={styles.label}>Açıklama</Text>
+            <Text style={[styles.label, { color: colors.text }]}>Açıklama</Text>
             <TextInput
                 value={description}
                 multiline={true}
-                style={styles.input}
+                style={[
+                    styles.input,
+                    {
+                        backgroundColor: colors.input,
+                        color: colors.text,
+                    }
+                ]}
                 onChangeText={setDescription}
             />
 
-            <Text style={styles.label}>Lokasyon</Text>
+            <Text style={[styles.label, { color: colors.text }]}>Lokasyon</Text>
             <TextInput
                 value={location}
                 multiline={true}
-                style={styles.input}
+                style={[
+                    styles.input,
+                    {
+                        backgroundColor: colors.input,
+                        color: colors.text,
+                    }
+                ]}
                 onChangeText={setLocation}
             />
 
-            <Text style={styles.label}>Etiketler</Text>
+            <Text style={[styles.label, { color: colors.text }]}>Etiketler</Text>
             <MultiSelect
                 style={styles.dropdown}
                 placeholderStyle={{ fontSize: 14, color: "grey", paddingLeft: 5 }}
@@ -206,11 +248,17 @@ export default function EditScreen({ route }) {
 
             {!isEditing && (
                 <View>
-                    <Text style={styles.label}>Şifre</Text>
+                    <Text style={[styles.label, { color: colors.text }]}>Şifre</Text>
                     <TextInput
                         value={password}
                         secureTextEntry={hidePassword}
-                        style={styles.input}
+                        style={[
+                            styles.input,
+                            {
+                                backgroundColor: colors.input,
+                                color: colors.text,
+                            }
+                        ]}
                         onChangeText={setPassword}
                         maxLength={4}
                         keyboardType="number-pad"
@@ -224,7 +272,14 @@ export default function EditScreen({ route }) {
                 </View>
             )}
 
-            {message ? <Text style={styles.message}>{message}</Text> : null}
+            {message ? (
+                <Text style={[
+                    styles.message,
+                    { color: colors.text }
+                ]}>
+                    {message}
+                </Text>
+            ) : null}
 
             <Pressable
                 onPress={saveUser}
@@ -243,7 +298,6 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: '#B6D0E2',
     },
     content: {
         padding: 20,
@@ -266,7 +320,6 @@ const styles = StyleSheet.create({
         padding: 5
     },
     input: {
-        backgroundColor: '#ffffff',
         borderRadius: 8,
     },
     button: {
@@ -293,7 +346,6 @@ const styles = StyleSheet.create({
     },
     dropdown: {
         height: 45,
-        backgroundColor: '#ffffff',
         borderBottomColor: 'gray',
         borderBottomWidth: 0.5,
         borderRadius: 8

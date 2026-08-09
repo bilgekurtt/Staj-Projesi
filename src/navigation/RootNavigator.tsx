@@ -10,6 +10,8 @@ import { SessionTimeoutProvider } from "react-native-session-timeout";
 
 import { TimeoutWarning } from "../components/TimeoutWarning";
 import { ActivityDetector } from "../components/ActivityDetector";
+
+import { ThemeProvider } from "../context/ThemeContext";
 export default function RootNavigator() {
 
     const [unlocked, setUnlocked] = useState(false);
@@ -17,31 +19,35 @@ export default function RootNavigator() {
     useAppLock(() => setUnlocked(false));
 
     return (
+
+        <ThemeProvider>
         
-        <SessionTimeoutProvider
-            enabled={unlocked? true : false}
-            timeout={30000}
-            warningDuration={5000}
-            onTimeout={() => setUnlocked(false)}
-        >
-            <ActivityDetector>
+            <SessionTimeoutProvider
+                enabled={unlocked? true : false}
+                timeout={30000}
+                warningDuration={5000}
+                onTimeout={() => setUnlocked(false)}
+            >
+                <ActivityDetector>
 
-                <NavigationContainer>
+                    <NavigationContainer>
 
-                {unlocked ?
+                    {unlocked ?
                 
-                        <AppNavigator onLock={() => setUnlocked(false)} />
-                        :
-                        <AuthNavigator onUnlock={() => setUnlocked(true)} />
-                    }
+                            <AppNavigator onLock={() => setUnlocked(false)} />
+                            :
+                            <AuthNavigator onUnlock={() => setUnlocked(true)} />
+                        }
 
-                </NavigationContainer>
+                    </NavigationContainer>
 
-            </ActivityDetector>
+                </ActivityDetector>
 
-            {unlocked && <TimeoutWarning />}
+                {unlocked && <TimeoutWarning />}
 
-        </SessionTimeoutProvider>
+            </SessionTimeoutProvider>
+
+        </ThemeProvider>
         
     );
 }

@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useState } from "react";
+﻿import React, { useCallback, useContext, useState } from "react";
 import { View, FlatList, Text, Alert, StyleSheet, Pressable } from "react-native";
 
 import { Tag } from "../types/tag.types";
@@ -10,6 +10,10 @@ import { deleteTag, getTags, updateTag, addTag } from "../api/tags.api";
 import { useFocusEffect } from "@react-navigation/native";
 import { TagModal } from "../components/TagModal";
 
+import { getThemeColors } from "../utils/themeColors";
+import { ThemeContext } from "../context/ThemeContext";
+
+
 
 
 export default function TagScreen() {
@@ -19,6 +23,8 @@ export default function TagScreen() {
     const [visible, setVisible] = useState(false);
     const [selectedTag, setSelectedTag] = useState<Tag | null>(null);
 
+    const { theme } = useContext(ThemeContext)!;
+    const colors = getThemeColors(theme);
 
     async function loadTags() {
 
@@ -73,7 +79,11 @@ export default function TagScreen() {
     );
 
     return (
-        <View style={{flex: 1}}>
+        <View style={[
+            styles.container,
+            { backgroundColor: colors.background }
+        ]}
+        >
             <FlatList
 
                 data={tags}
@@ -83,7 +93,10 @@ export default function TagScreen() {
                 renderItem={({ item }) => (
 
                     <Pressable
-                        style={styles.card}
+                        style={[
+                            styles.card,
+                            { backgroundColor: colors.card }
+                        ]}
                         onPress={() => openEditTagModal(item)}
                     >
 
@@ -103,7 +116,7 @@ export default function TagScreen() {
                 ListHeaderComponent={
                     <View style={styles.header}>
 
-                        <Text style={styles.title}>Etiketler</Text>
+                        <Text style={[styles.title, { color: colors.text }]}>Etiketler</Text>
 
                         <Pressable
                             style={styles.button}
@@ -135,7 +148,6 @@ export default function TagScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#B6D0E2',
     },
     header: {
         flexDirection: "row",
@@ -155,7 +167,6 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         justifyContent: "space-between",
-        backgroundColor: '#ffffff',
         borderRadius: 8,
         padding: 10,
         shadowColor: '#000',
