@@ -1,6 +1,6 @@
 ﻿//purpose: ui for the home screen
 
-import React, { useCallback, useState, useRef } from 'react';
+import React, { useCallback, useState, useRef, useContext } from 'react';
 import { View, Text, StyleSheet, Image, Pressable, Alert } from 'react-native';
 
 import { getUsers,deleteUser } from "../api/users.api";
@@ -8,6 +8,7 @@ import { getUsers,deleteUser } from "../api/users.api";
 import { getTagColor } from "../utils/tagColors";
 import { mergeUsers } from "../utils/mergeUsers";
 import { confirmAction } from '../utils/confirmAction';
+import { getThemeColors } from '../utils/themeColors';
 
 import { Tag } from "../types/tag.types";
 import { User } from '../types/user.types';
@@ -15,6 +16,7 @@ import { User } from '../types/user.types';
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import SwipeableFlatList from "rn-gesture-swipeable-flatlist/reanimated";
 
+import { ThemeContext } from "../context/ThemeContext";
 
 
 
@@ -30,6 +32,10 @@ export default function HomeScreen({ onLock }: HomeScreenProps) {
     const isFetchingRef = useRef(false);
 
     const navigation = useNavigation();
+
+    const { theme, toggleTheme } = useContext(ThemeContext)!;
+
+    const colors = getThemeColors(theme);
 
 
     async function loadUsers(pageNumber : number) {
@@ -82,7 +88,7 @@ export default function HomeScreen({ onLock }: HomeScreenProps) {
             data={users}
             keyExtractor={(item) => item._id}
             ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-            style={styles.container}
+            style={[styles.container, {backgroundColor: colors.background}]}
             contentContainerStyle={styles.itemContainer}
 
             renderRightActions={(item: User) => (
@@ -118,6 +124,15 @@ export default function HomeScreen({ onLock }: HomeScreenProps) {
                     </Pressable>
 
                     <Pressable
+                        onPress={toggleTheme}
+                        style={[styles.button, { backgroundColor: "#8aabd0" }]}
+                    >
+                        <Text style={styles.buttonText}>
+                            {theme === "dark" ? "☀" : "☾"}
+                        </Text>
+                    </Pressable>
+
+                    <Pressable
                         onPress={onLock}
                         style={[styles.button, styles.exitButton] }
                     >
@@ -130,7 +145,7 @@ export default function HomeScreen({ onLock }: HomeScreenProps) {
             renderItem={({ item }) => (
 
                 <Pressable
-                    style={styles.card}
+                    style={[styles.card, {backgroundColor: colors.card}]}
 
                     //send user object to edit screen inside route.params
                     onPress={() => navigation.navigate("EditUser", {user: item})}
@@ -142,12 +157,12 @@ export default function HomeScreen({ onLock }: HomeScreenProps) {
                         source={{uri: item.avatarURL }}
                         />
                         <Text
-                            style={styles.titleText}>
+                            style={[styles.titleText, {color: colors.text}]}>
                             {item.name} {item.lastname}
                         </Text>
                     </View>
 
-                    <Text style={styles.descriptionText}>{item.description}</Text>
+                    <Text style={[styles.descriptionText, {color: colors.secondaryText}]}>{item.description}</Text>
 
                     <View style={styles.tagBox}>
                         {item.tags.map((tag: Tag) => (
@@ -174,7 +189,6 @@ export default function HomeScreen({ onLock }: HomeScreenProps) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#B6D0E2',
     },
     header: {
         flexDirection: "row",
@@ -196,7 +210,6 @@ const styles = StyleSheet.create({
 
     },
     card: {
-        backgroundColor: '#ffffff',
         borderRadius: 8,
         padding: 6,
         shadowColor: '#000',
@@ -216,7 +229,7 @@ const styles = StyleSheet.create({
     },
     button: {
         backgroundColor: "#8ad096",
-        width: 120,
+        width: 80,
         padding: 10,
         borderRadius: 8,
         marginBottom: 10,

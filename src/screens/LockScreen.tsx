@@ -1,10 +1,13 @@
 ﻿//purpose: ui for the lock screen + authentication logic
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import { View, Text, TextInput, StyleSheet, SafeAreaView } from 'react-native';
 
 import { setToken } from '../store/tokenStore';
 import { login } from "../api/auth.api";
+
+import { ThemeContext } from "../context/ThemeContext";
+import { getThemeColors } from "../utils/themeColors";
 
 interface LockScreenProps {
     onUnlock: () => void;
@@ -16,6 +19,9 @@ const LockScreen = ({ onUnlock }: LockScreenProps) => {
     const [errorMessage, setErrorMessage] = useState<string>('');
 
     const inputsRef = useRef<(TextInput | null)[]>([]);
+
+    const { theme } = useContext(ThemeContext)!;
+    const colors = getThemeColors(theme);
 
     //doesnt repeat or get recalled anywhere so it lives here for now
     const verifyPin = async (currentPinArray: string[]) => {
@@ -64,12 +70,22 @@ const LockScreen = ({ onUnlock }: LockScreenProps) => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[
+            styles.container,
+            { backgroundColor: colors.background }
+        ]}
+        >
             <View style={styles.pinContainer}>     
                 {pin.map((digit, index) => (        //for each item in the array, output a seperate TextInput component
                     <TextInput
                         key={index}
-                        style={styles.pinBox} 
+                        style={[
+                            styles.pinBox,
+                            {
+                                borderColor: colors.border,
+                                color: colors.text,
+                            }
+                        ]} 
                         maxLength={1}
                         keyboardType="numeric"
                         value={digit}
@@ -90,7 +106,17 @@ const LockScreen = ({ onUnlock }: LockScreenProps) => {
                 ))}
             </View>
 
-            {errorMessage ? <Text style={styles.messageText}>{errorMessage}</Text> : null}
+            {errorMessage ? (
+                <Text
+                    style={[
+                        styles.messageText,
+                        { color: colors.text }
+                    ]}
+                >
+                    {errorMessage}
+                </Text>
+            ) : null}
+
         </SafeAreaView>
     );
 };
@@ -101,7 +127,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor:'white'
     },
     pinContainer: {
         flexDirection: 'row',
@@ -112,7 +137,6 @@ const styles = StyleSheet.create({
     },
     pinBox: {
         borderWidth: 1,
-        borderColor: 'black',
         width: 47,
         height: 46,
         margin: 8,
@@ -125,7 +149,6 @@ const styles = StyleSheet.create({
         marginTop: 30,
         fontSize: 18,
         fontWeight: '600',
-        color: '#333',
     }
 });
 

@@ -1,6 +1,9 @@
-﻿import { useEffect, useState } from "react";
+﻿import { useContext, useEffect, useState } from "react";
 import { Modal, View, Button, StyleSheet, TextInput, Text } from "react-native";
 import { Tag } from "../types/tag.types";
+
+import { ThemeContext } from "../context/ThemeContext";
+import { getThemeColors } from "../utils/themeColors";
 
 interface TagModalProps {
     visible: boolean;
@@ -15,6 +18,9 @@ export function TagModal({visible, tag, onSave, onDelete, onCancel}: TagModalPro
 
     const [name, setName] = useState("");
 
+    const { theme } = useContext(ThemeContext)!;
+    const colors = getThemeColors(theme);
+
     useEffect(() => {
         setName(tag?.name ?? "");
     }, [tag, visible]);
@@ -26,15 +32,33 @@ export function TagModal({visible, tag, onSave, onDelete, onCancel}: TagModalPro
             animationType="fade"
         >
             <View style={styles.overlay}>
-                <View style={styles.modal}>
+                <View style={[
+                    styles.modal,
+                    {
+                        backgroundColor: colors.card,
+                        borderColor: colors.border,
+                    }
+                ]}>
 
-                    <Text style={styles.title}>Düzenle / Oluştur</Text>
+                    <Text style={[
+                        styles.title,
+                        { color: colors.text }
+                    ]}>
+                        Düzenle / Oluştur
+                    </Text>
 
                     <TextInput
                         value={name}
-                        style={styles.inputBox}
+                        style={[
+                            styles.inputBox,
+                            {
+                                backgroundColor: colors.input,
+                                color: colors.text,
+                                borderColor: colors.border,
+                            }
+                        ]}
                         placeholder="Etiket Adı"
-                        placeholderTextColor="#999999"
+                        placeholderTextColor={colors.secondaryText}
                         onChangeText={setName}
                     />
 
@@ -61,14 +85,14 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#00000080"
     },
     modal: {
         width: 300,
         padding: 20,
-        backgroundColor: "white",
         borderRadius: 8,
-        alignItems: "center"
+        alignItems: "center",
+        borderWidth: 1,
+        borderStyle: "solid",
     },
     title: {
         fontWeight: 500,
@@ -79,7 +103,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderWidth: 1,
         borderStyle: "solid",
-        borderColor: "gray",
         borderRadius: 4,
         marginBottom: 15
     },
