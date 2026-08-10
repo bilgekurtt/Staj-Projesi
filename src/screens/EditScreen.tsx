@@ -18,7 +18,7 @@ import { appStateFlag } from "../flags/appStateFlag";
 import { ThemeContext } from "../context/ThemeContext";
 import { getThemeColors } from "../utils/themeColors";
 
-
+import Clipboard from "@react-native-clipboard/clipboard";
 export default function EditScreen({ route }) {
 
     //extract user object (if parameters were passed)
@@ -114,6 +114,29 @@ export default function EditScreen({ route }) {
                 setAvatarURL(imageUri);
             }
         });
+    }
+
+    function copyUserInfo() {
+
+        const tagNames = selectedTags
+            .map(tagId => {
+                const tag = tags.find(tag => tag._id === tagId);
+                return tag?.name;
+            });
+
+        const userInfo = 
+           `İsim: ${name}
+            Soyisim: ${lastname}
+            Email: ${email}
+            Açıklama: ${description}
+            Lokasyon: ${location}
+            Etiketler: ${tagNames.join(", ")}`;
+
+        Clipboard.setString(userInfo);
+
+        console.log("selectedTags:", selectedTags);
+        console.log("tags:", tags);
+
     }
 
     useEffect(() => {
@@ -263,12 +286,18 @@ export default function EditScreen({ route }) {
                         maxLength={4}
                         keyboardType="number-pad"
                     />
-                    <Pressable
-                        style={styles.button}
-                        onPress={() => setHidePassword(!hidePassword)}
-                    >
-                        <Text style={{color: "red"}}>{hidePassword ? "Şifreyi Göster": "Şifreyi Gizle"}</Text>
-                    </Pressable>
+
+                  
+                        <Pressable
+                            style={styles.button}
+                            onPress={() => setHidePassword(!hidePassword)}
+                        >
+                            <Text style={{color: "red"}}>{hidePassword ? "Şifreyi Göster": "Şifreyi Gizle"}</Text>
+                        </Pressable>
+
+                     
+                    
+
                 </View>
             )}
 
@@ -281,14 +310,24 @@ export default function EditScreen({ route }) {
                 </Text>
             ) : null}
 
-            <Pressable
-                onPress={saveUser}
-                style={styles.button}
-            >
-                <Text style={styles.buttonText}>
-                    {isEditing ? "Kaydet" : "Oluştur"}
-                </Text>
-            </Pressable>
+            <View style={styles.buttonRow}>
+
+                <Pressable
+                    style={[styles.button, styles.copyButton, ]}
+                    onPress={copyUserInfo}
+                >
+                    <Text style={{ color: "white" }}>Kopyala</Text>
+                </Pressable>
+
+                <Pressable
+                    onPress={saveUser}
+                    style={styles.button}
+                >
+                    <Text style={styles.buttonText}>
+                        {isEditing ? "Kaydet" : "Oluştur"}
+                    </Text>
+                </Pressable>
+            </View>
 
         </KeyboardAwareScrollView>
     );
@@ -330,6 +369,9 @@ const styles = StyleSheet.create({
         padding: 10,
         paddingHorizontal: 20
     },
+    copyButton: {
+        backgroundColor: '#6bc2ed',
+    },
     buttonText: {
         fontSize: 16,
         color: "white"
@@ -354,4 +396,9 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginTop: 12
     },
+    buttonRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        gap: 40,
+    }
 })
