@@ -10,11 +10,14 @@ import { SessionTimeoutProvider } from "react-native-session-timeout";
 
 import { TimeoutWarning } from "../components/TimeoutWarning";
 import { ActivityDetector } from "../components/ActivityDetector";
+import { Loading } from "../components/Loading";
 
 import { ThemeProvider } from "../context/ThemeContext";
 
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../store/authSlice";
+
+
 
 
 export default function RootNavigator() {
@@ -52,6 +55,8 @@ export default function RootNavigator() {
                             :
                             <AuthNavigator/>
                         }
+
+                        <Loading />
 
                     </NavigationContainer>
 
