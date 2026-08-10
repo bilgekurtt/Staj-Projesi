@@ -12,11 +12,25 @@ import { TimeoutWarning } from "../components/TimeoutWarning";
 import { ActivityDetector } from "../components/ActivityDetector";
 
 import { ThemeProvider } from "../context/ThemeContext";
+
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../store/authSlice";
+
+
 export default function RootNavigator() {
 
-    const [unlocked, setUnlocked] = useState(false);
+    const unlocked = useSelector(
+        (state: { auth: { isAuthenticated: boolean } }) =>
+            state.auth.isAuthenticated
+    );
 
-    useAppLock(() => setUnlocked(false));
+    const dispatch = useDispatch();
+
+    function lockApp() {
+        dispatch(logout());
+    }
+
+    useAppLock(lockApp);
 
     return (
 
@@ -26,7 +40,7 @@ export default function RootNavigator() {
                 enabled={unlocked? true : false}
                 timeout={30000}
                 warningDuration={5000}
-                onTimeout={() => setUnlocked(false)}
+                onTimeout={lockApp}
             >
                 <ActivityDetector>
 
@@ -34,9 +48,9 @@ export default function RootNavigator() {
 
                     {unlocked ?
                 
-                            <AppNavigator onLock={() => setUnlocked(false)} />
+                            <AppNavigator onLock={lockApp} />
                             :
-                            <AuthNavigator onUnlock={() => setUnlocked(true)} />
+                            <AuthNavigator/>
                         }
 
                     </NavigationContainer>
