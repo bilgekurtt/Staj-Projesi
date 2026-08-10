@@ -9,11 +9,11 @@ import { login } from "../api/auth.api";
 import { ThemeContext } from "../context/ThemeContext";
 import { getThemeColors } from "../utils/themeColors";
 
-interface LockScreenProps {
-    onUnlock: () => void;
-}
+import { useDispatch } from "react-redux";
+import { login as loginSuccess} from "../store/authSlice";
 
-const LockScreen = ({ onUnlock }: LockScreenProps) => { 
+
+export default function LockScreen() { 
 
     const [pin, setPin] = useState<string[]>(['', '', '', '']);
     const [errorMessage, setErrorMessage] = useState<string>('');
@@ -23,6 +23,8 @@ const LockScreen = ({ onUnlock }: LockScreenProps) => {
     const { theme } = useContext(ThemeContext)!;
     const colors = getThemeColors(theme);
 
+    const dispatch = useDispatch();
+
     //doesnt repeat or get recalled anywhere so it lives here for now
     const verifyPin = async (currentPinArray: string[]) => {
  
@@ -30,12 +32,16 @@ const LockScreen = ({ onUnlock }: LockScreenProps) => {
 
         if (fullPin.length === 4) {
             try {
+
                 const response = await login(fullPin);
                 setToken(response.token);
-                onUnlock();
+                dispatch(loginSuccess());
+
             } catch {
+
                 setErrorMessage("Yanlış şifre. Tekrar Deneyin!");
                 resetPin();
+
             }
         }
     };
@@ -152,5 +158,3 @@ const styles = StyleSheet.create({
     }
 });
 
-
-export default LockScreen;

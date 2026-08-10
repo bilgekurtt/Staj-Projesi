@@ -5,16 +5,12 @@ import LockScreen from "../screens/LockScreen";
 
 const Stack = createNativeStackNavigator();
 
-interface AuthNavigatorProps {
-    onUnlock: () => void;
-}
-
-export default function AuthNavigator({ onUnlock }: AuthNavigatorProps) {
+export default function AuthNavigator() {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Lock">
                 {() => (
-                    <LockScreen onUnlock={onUnlock} />
+                    <LockScreen />
                 )}
             </Stack.Screen>
         </Stack.Navigator>
