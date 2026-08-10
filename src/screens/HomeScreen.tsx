@@ -54,6 +54,8 @@ export default function HomeScreen({ onLock }: HomeScreenProps) {
 
             //reached the end of pages?
             if (pageNumber >= response.pagination.totalPages) return;
+        } catch (error) {
+            console.error("Loading users failed:", error);
         } finally {
             isFetchingRef.current = false;
         }
