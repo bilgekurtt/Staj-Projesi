@@ -4,6 +4,9 @@
 import axios from 'axios';
 import { getToken } from "../store/tokenStore";
 
+import { store } from "../store/store";
+import { requestStarted, requestFinished } from "../store/loadingSlice";
+
 export const apiClient = axios.create({
     baseURL: "https://aok.erpstok.com",
     headers: {
@@ -19,6 +22,8 @@ apiClient.interceptors.request.use((config) => {
         config.headers.Authorization = `Bearer ${token}`;
     }
 
+    store.dispatch(requestStarted());
+
     return config;
 }, function (error) {
     return Promise.reject(error);
@@ -26,7 +31,10 @@ apiClient.interceptors.request.use((config) => {
 
 //runs at every response, normalizes error
 apiClient.interceptors.response.use(
-    response => response,
+    response => {
+        store.dispatch(requestFinished());
+        return response;
+    },
     error => {
         const status = error.response?.status;
 
